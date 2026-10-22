@@ -7,7 +7,7 @@ def index(request):
 def login(request):
     return HttpResponse('<h1>login</h1>')
 
-def cadastrar(request):
+def cadastro(request):
     return HttpResponse('<h1>cadastro</h1>')
 
 def logout(request):
