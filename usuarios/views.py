@@ -15,12 +15,13 @@ def cadastro(request):
     form = CadastroForms()
 
     if request.method == 'POST':
+        form = CadastroForms(request.POST)
         if form.is_valid():
                 
                 if form["senha_1"].value() != form["senha_2"].value():
                     return redirect('cadastro')
                 
-                nome=form["nome_cadastro"].value()
+                nome=form["usuario"].value()
                 email=form["email"].value()
                 senha=form["senha_1"].value()
 
