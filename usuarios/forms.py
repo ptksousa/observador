@@ -61,3 +61,26 @@ class CadastroForms(forms.Form):
                 raise forms.ValidationError("Senhas não são iguais.")
             else:
                 return senha_2
+
+
+class LoginForms(forms.Form):
+    usuario_login=forms.CharField(
+        label="Usuário",
+        required=True,
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Ex.: O Observador",
+            }
+        )
+    )
+    senha_login=forms.CharField(
+        label="Senha",
+        required=True,
+        max_length=70,
+        widget=forms.PasswordInput(
+            attrs={
+                "placeholder": "Digite sua senha",
+            }
+        )
+    )
