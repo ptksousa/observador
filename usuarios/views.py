@@ -1,15 +1,38 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
-from usuarios.forms import CadastroForms
+from usuarios.forms import CadastroForms, LoginForms
 
 from django.contrib.auth.models import User
+from django.contrib import auth, messages
 
 def index(request):
     return HttpResponse('<h1>Olá mundo</h1>')
 
 def login(request):
-    return HttpResponse('<h1>login</h1>')
+    form = LoginForms()
+
+    if request.method == 'POST':
+        form = LoginForms(request.POST)
+
+        if form.is_valid():
+            nome=form['usuario_login'].value()
+            senha=form['senha_login'].value()
+
+            usuario = auth.authenticate(
+                request,
+                username=nome,
+                password=senha
+            )
+            if usuario is not None:
+                auth.login(request, usuario)
+                messages.success(request, f'{nome} logado com sucesso!')
+                return redirect('index')
+            else:
+                messages.error(request, 'Erro ao efetuar login')            
+                return redirect('login')
+
+    return render(request, "usuarios/login.html", {"form": form})
 
 def cadastro(request):
     form = CadastroForms()
