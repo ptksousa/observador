@@ -1,19 +1,77 @@
-<!-- Include stylesheet -->
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Artigo - Editor</title>
+    
+    <!-- CSS obrigatório do Quill (sem isso os botões não aparecem) -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
+</head>
+<body>
 
-<!-- Create the editor container -->
-<div id="editor">
-  <p>Hello World!</p>
-  <p>Some initial <strong>bold</strong> text</p>
-  <p><br /></p>
-</div>
+    <h2>Área de redação</h2>
 
-<!-- Include the Quill library -->
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <!-- Formulário do Django -->
+    <form action="{% url 'editor' %}" method="POST" id="form-artigo">
+        {% csrf_token %}
+        
+        <div>
+            <label for="titulo"><strong>Título da Matéria:</strong></label>
+            <br>
+            <input type="text" name="titulo" id="titulo" required>
+        </div>
+        
+        <br>
 
-<!-- Initialize Quill editor -->
-<script>
-  const quill = new Quill('#editor', {
-    theme: 'snow'
-  });
-</script>
+        <div>
+            <label><strong>Conteúdo do Artigo:</strong></label>
+            <!-- A Caixa do Quill (com a altura direto na tag para não amassar o editor) -->
+            <div id="editor" style="height: 400px;"></div>
+        </div>
+
+        <!-- O Campo Escondido (que o Django vai ler) -->
+        <input type="hidden" name="conteudo" id="conteudo-escondido">
+        
+        <br>
+
+        <button type="submit">Salvar Artigo</button>
+    </form>
+
+    <!-- O Motor do Quill (JS) -->
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+
+    <!-- Configuração e Truque de Envio -->
+    <script>
+        const opcoesDaBarra = [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'align': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['link', 'image', 'video'],
+            ['clean']
+        ];
+
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: opcoesDaBarra
+            },
+            placeholder: 'Cuidado com o que escreve.'
+        });
+
+        var form = document.getElementById('form-artigo');
+        
+        form.onsubmit = function() {
+            var conteudoDoEditor = quill.root.innerHTML;
+            
+            if (conteudoDoEditor === '<p><br></p>') {
+                alert('O conteúdo do artigo não pode estar vazio!');
+                return false; 
+            }
+            
+            document.getElementById('conteudo-escondido').value = conteudoDoEditor;
+        };
+    </script>
+</body>
+</html>
