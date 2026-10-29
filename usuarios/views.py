@@ -6,8 +6,6 @@ from usuarios.forms import CadastroForms, LoginForms
 from django.contrib.auth.models import User
 from django.contrib import auth, messages
 
-def index(request):
-    return HttpResponse('<h1>Olá mundo</h1>')
 
 def login(request):
     form = LoginForms()

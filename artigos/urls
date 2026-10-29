@@ -1,0 +1,7 @@
+from views import index, editor
+from django.urls import path
+
+urlpatterns = [
+    path('', index, name='index'),
+    path('editor', editor, name='editor'),
+]
