@@ -5,7 +5,11 @@ from django.contrib import messages
 from artigos.models import Artigo
 
 def index(request):
-    return HttpResponse('<h1>Olá mundo</h1>')
+    lista_artigos = Artigo.objects.all().order_by('-data_criacao').filter(publicado=True)
+    contexto = {
+        'artigos': lista_artigos
+    }
+    return render(request, 'artigos/index.html', contexto)
 
 def editor(request):
     if request.method == 'POST':

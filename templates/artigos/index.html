@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>O Observador</title>
+</head>
+<body>
+
+    <!-- CABEÇALHO DO PORTAL -->
+    <header>
+        <h1>O Observador</h1>
+        <p>O folhetim mais imparcial e coerente de Cariacica.</p>
+        
+        <nav>
+            <a href="{% url 'index' %}">Início</a>
+            
+            <!-- Lógica para exibir os botões certos dependendo se está logado ou não -->
+            {% if user.is_authenticated %}
+                <span>Bem-vindo, {{ user.username }}</span>
+                <a href="{% url 'editor' %}">Escrever Teoria</a>
+                
+                <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">Sair</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Entrar</a>
+                <a href="{% url 'cadastro' %}">Cadastrar</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <hr>
+
+    <!-- CONTEÚDO PRINCIPAL (LISTA DE NOTÍCIAS) -->
+    <main>
+        <section>
+            <h2>Últimas Notícias</h2>
+
+            <!-- O loop do Django que vai passar por todos os artigos do banco de dados -->
+            {% if artigos %}
+                <ul>
+                    {% for artigo in artigos %}
+                        <li>
+                            <article>
+                                <h3>{{ artigo.titulo }}</h3>
+                                
+                                <p><small>Por <strong>{{ artigo.autor.username }}</strong> em {{ artigo.data_criacao|date:"d/m/Y H:i" }}</small></p>
+                                
+                                <!-- Resumo do texto gerado pelo Quill -->
+                                <div>
+                                    {{ artigo.conteudo|truncatewords_html:30|safe }}
+                                </div>
+                                
+                                <br>
+                                <a href="#">Ler mais... &rarr;</a>
+                            </article>
+                            <hr>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <!-- Mensagem caso o banco de dados ainda esteja vazio -->
+                <p>Nenhum artigo publicado.</p>
+            {% endif %}
+
+        </section>
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer>
+        <p>&copy; 2026 O Observador.</p>
+    </footer>
+
+</body>
+</html>
