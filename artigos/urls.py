@@ -1,4 +1,4 @@
-from views import index, editor
+from artigos.views import index, editor
 from django.urls import path
 
 urlpatterns = [
