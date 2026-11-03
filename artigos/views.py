@@ -15,14 +15,13 @@ def editor(request):
     if request.method == 'POST':
         titulo_digitado = request.POST.get('titulo')
         conteudo_do_quill = request.POST.get('conteudo')
-
         capa_enviada = request.FILES.get('imagem_capa')
         
         autor_logado = request.user 
 
         novo_artigo = Artigo.objects.create(
             titulo=titulo_digitado,
-            imagem_capa=capa_enviada
+            imagem_capa=capa_enviada,
             conteudo=conteudo_do_quill,
             autor=autor_logado
         )
