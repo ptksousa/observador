@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib import messages
 
@@ -30,3 +30,23 @@ def editor(request):
         return redirect('index') 
 
     return render(request, 'artigos/editor.html')
+
+def publicar_artigo(request, id):
+    if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
+        return redirect('index')
+
+    artigo = get_object_or_404(Artigo, id=id)
+    
+    artigo.publicado = not artigo.publicado
+    artigo.save()
+    
+    return redirect('redacao')
+
+def redacao(request):
+    if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
+        return redirect('index')
+
+    todos_artigos = Artigo.objects.all().order_by('-data_criacao')
+    
+    return render(request, 'artigos/redacao.html', {'artigos': todos_artigos})
+    
