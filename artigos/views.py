@@ -42,6 +42,25 @@ def publicar_artigo(request, id):
     
     return redirect('redacao')
 
+def editar_artigo(request, id):
+    if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
+        return redirect('index')
+
+    artigo = get_object_or_404(Artigo, id=id)
+
+    if request.method == 'POST':
+        artigo.titulo = request.POST.get('titulo')
+        artigo.conteudo = request.POST.get('conteudo')
+        
+        nova_capa = request.FILES.get('imagem_capa')
+        if nova_capa:
+            artigo.imagem_capa = nova_capa
+            
+        artigo.save()
+        return redirect('redacao')
+
+    return render(request, 'artigos/editor.html', {'artigo': artigo})
+
 def redacao(request):
     if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
         return redirect('index')
