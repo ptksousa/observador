@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class Artigo(models.Model):
     titulo = models.CharField(max_length=200)
     conteudo = models.TextField() 
+    imagem_capa = models.ImageField(upload_to='capas/', null=True, blank=True)
     data_criacao = models.DateTimeField(auto_now_add=True)
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
     publicado = models.BooleanField(default=False)
