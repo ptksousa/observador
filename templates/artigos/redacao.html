@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel da Redação - O Observador</title>
+</head>
+<body>
+
+    <header>
+        <h1>Área da Redação</h1>
+        <p>Gerenciamento central de teorias e publicações.</p>
+        <nav>
+            <a href="{% url 'index' %}">&larr; Voltar para o Site</a>
+            <a href="{% url 'editor' %}"><strong>+ Nova Publicação</strong></a>
+            
+            <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Sair</button>
+            </form>
+        </nav>
+    </header>
+
+    <hr>
+
+    <main>
+        <h2>Todas as Publicações</h2>
+
+        <table border="1" width="100%" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th align="left">Título</th>
+                    <th align="center">Status</th>
+                    <th align="left">Assinado por (Autor Fake)</th>
+                    <th align="left">Registrado por (Redator)</th>
+                    <th align="left">Data</th>
+                    <th align="center">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for artigo in artigos %}
+                    <tr>
+                        <td><strong>{{ artigo.titulo }}</strong></td>
+                        
+                        <td align="center">
+                            {% if artigo.publicado %}
+                                <span style="color: green;">Publicado</span>
+                            {% else %}
+                                <span style="color: gray;">Rascunho</span>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ artigo.autor_fake.nome_ficticio|default:"Sem assinatura" }}</td>
+                        
+                        <td>{{ artigo.registrado_por.username|default:"Desconhecido" }}</td>
+                        
+                        <td>{{ artigo.data_criacao|date:"d/m/Y H:i" }}</td>
+                        
+                        <td align="center">
+                            {% if not artigo.publicado %}
+                                <a href="{% url 'publicar_artigo' artigo.id %}" style="color: green;"><strong>Publicar</strong></a> | 
+                            {% else %}
+                                <a href="{% url 'publicar_artigo' artigo.id %}" style="color: orange;">Reverter</a> | 
+                            {% endif %}
+
+                            <!-- Links de Edição e Exclusão atualizados -->
+                            <a href="{% url 'editar_artigo' artigo.id %}">Editar</a> | 
+                            <a href="{% url 'excluir_artigo' artigo.id %}" style="color: red;" onclick="return confirm('Tem certeza que deseja excluir esta teoria? Essa ação não pode ser desfeita.')">Excluir</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" align="center">Nenhuma teoria foi registrada na base de dados ainda.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+</body>
+</html>

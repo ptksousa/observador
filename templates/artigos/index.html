@@ -15,7 +15,11 @@
             
             {% if user.is_authenticated %}
                 <span>Bem-vindo, {{ user.username }}</span>
-                <a href="{% url 'editor' %}">Escrever Teoria</a>
+                
+                <!-- Nova trava visual baseada no grupo do banco de dados -->
+                {% if eh_autor %}
+                    <a href="{% url 'redacao' %}"><strong>Painel da Redação</strong></a>
+                {% endif %}
                 
                 <form action="{% url 'logout' %}" method="POST" style="display:inline;">
                     {% csrf_token %}
@@ -39,16 +43,14 @@
                     {% for artigo in artigos %}
                         <li>
                             <article>
-                                <!-- Exibição da Imagem de Capa (se existir) -->
                                 {% if artigo.imagem_capa %}
                                     <img src="{{ artigo.imagem_capa.url }}" alt="Capa: {{ artigo.titulo }}" style="max-width: 300px; display: block; margin-bottom: 10px;">
                                 {% endif %}
 
                                 <h3>{{ artigo.titulo }}</h3>
                                 
-                                <p><small>Por <strong>{{ artigo.autor.username }}</strong> em {{ artigo.data_criacao|date:"d/m/Y H:i" }}</small></p>
+                                <p><small>Por <strong>{{ artigo.autor_fake.nome_ficticio|default:"Desconhecido" }}</strong> em {{ artigo.data_criacao|date:"d/m/Y H:i" }}</small></p>
                                 
-                                <!-- Texto limpo de HTML e encurtado -->
                                 <div>
                                     <p>{{ artigo.conteudo|striptags|truncatewords:30 }}</p>
                                 </div>
