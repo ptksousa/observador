@@ -6,9 +6,16 @@ from artigos.models import Artigo
 
 def index(request):
     lista_artigos = Artigo.objects.all().order_by('-data_criacao').filter(publicado=True)
+    
+    eh_autor = False
+    if request.user.is_authenticated:
+        eh_autor = request.user.groups.filter(name='autores').exists() or request.user.is_superuser
+    
     contexto = {
-        'artigos': lista_artigos
+        'artigos': lista_artigos,
+        'eh_autor': eh_autor 
     }
+    
     return render(request, 'artigos/index.html', contexto)
 
 def editor(request):
@@ -30,6 +37,14 @@ def editor(request):
         return redirect('index') 
 
     return render(request, 'artigos/editor.html')
+
+def redacao(request):
+    if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
+        return redirect('index')
+
+    todos_artigos = Artigo.objects.all().order_by('-data_criacao')
+    
+    return render(request, 'artigos/redacao.html', {'artigos': todos_artigos})
 
 def publicar_artigo(request, id):
     if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
@@ -61,11 +76,14 @@ def editar_artigo(request, id):
 
     return render(request, 'artigos/editor.html', {'artigo': artigo})
 
-def redacao(request):
+def excluir_artigo(request, id):
     if not request.user.groups.filter(name='autores').exists() and not request.user.is_superuser:
         return redirect('index')
 
-    todos_artigos = Artigo.objects.all().order_by('-data_criacao')
+    artigo = get_object_or_404(Artigo, id=id)
+    artigo.delete() 
     
-    return render(request, 'artigos/redacao.html', {'artigos': todos_artigos})
+    return redirect('redacao')
+
+
     

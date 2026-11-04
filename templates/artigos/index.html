@@ -2,22 +2,24 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>O Observador</title>
+    <title>O Observador - A verdade oculta</title>
 </head>
 <body>
 
-    <!-- CABEÇALHO DO PORTAL -->
     <header>
         <h1>O Observador</h1>
-        <p>O folhetim mais imparcial e coerente de Cariacica.</p>
+        <p>As teorias da conspiração que o sistema tenta esconder.</p>
         
         <nav>
             <a href="{% url 'index' %}">Início</a>
             
-            <!-- Lógica para exibir os botões certos dependendo se está logado ou não -->
             {% if user.is_authenticated %}
                 <span>Bem-vindo, {{ user.username }}</span>
-                <a href="{% url 'editor' %}">Escrever Teoria</a>
+                
+                <!-- Nova trava visual baseada no grupo do banco de dados -->
+                {% if eh_autor %}
+                    <a href="{% url 'redacao' %}"><strong>Painel da Redação</strong></a>
+                {% endif %}
                 
                 <form action="{% url 'logout' %}" method="POST" style="display:inline;">
                     {% csrf_token %}
@@ -32,44 +34,43 @@
 
     <hr>
 
-    <!-- CONTEÚDO PRINCIPAL (LISTA DE NOTÍCIAS) -->
     <main>
         <section>
-            <h2>Últimas Notícias</h2>
+            <h2>Últimas Revelações</h2>
 
-            <!-- O loop do Django que vai passar por todos os artigos do banco de dados -->
             {% if artigos %}
                 <ul>
                     {% for artigo in artigos %}
                         <li>
                             <article>
+                                {% if artigo.imagem_capa %}
+                                    <img src="{{ artigo.imagem_capa.url }}" alt="Capa: {{ artigo.titulo }}" style="max-width: 300px; display: block; margin-bottom: 10px;">
+                                {% endif %}
+
                                 <h3>{{ artigo.titulo }}</h3>
                                 
-                                <p><small>Por <strong>{{ artigo.autor.username }}</strong> em {{ artigo.data_criacao|date:"d/m/Y H:i" }}</small></p>
+                                <p><small>Por <strong>{{ artigo.autor_fake.nome_ficticio|default:"Desconhecido" }}</strong> em {{ artigo.data_criacao|date:"d/m/Y H:i" }}</small></p>
                                 
-                                <!-- Resumo do texto gerado pelo Quill -->
                                 <div>
-                                    {{ artigo.conteudo|truncatewords_html:30|safe }}
+                                    <p>{{ artigo.conteudo|striptags|truncatewords:30 }}</p>
                                 </div>
                                 
                                 <br>
-                                <a href="#">Ler mais... &rarr;</a>
+                                <a href="#">Ler a teoria completa &rarr;</a>
                             </article>
                             <hr>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <!-- Mensagem caso o banco de dados ainda esteja vazio -->
-                <p>Nenhum artigo publicado.</p>
+                <p>Nenhuma conspiração foi revelada ainda. Seja o primeiro a quebrar o silêncio!</p>
             {% endif %}
 
         </section>
     </main>
 
-    <!-- RODAPÉ -->
     <footer>
-        <p>&copy; 2026 O Observador.</p>
+        <p>&copy; 2026 O Observador. A verdade está lá fora.</p>
     </footer>
 
 </body>

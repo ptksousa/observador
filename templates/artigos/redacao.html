@@ -41,7 +41,6 @@
                     <tr>
                         <td><strong>{{ artigo.titulo }}</strong></td>
                         
-                        <!-- Coluna visual para a redação saber o que está no ar -->
                         <td align="center">
                             {% if artigo.publicado %}
                                 <span style="color: green;">Publicado</span>
@@ -50,29 +49,26 @@
                             {% endif %}
                         </td>
 
-                        <!-- Personagem fictício (preparado para a sua futura implementação) -->
                         <td>{{ artigo.autor_fake.nome_ficticio|default:"Sem assinatura" }}</td>
                         
-                        <!-- Redator real logado -->
                         <td>{{ artigo.registrado_por.username|default:"Desconhecido" }}</td>
                         
                         <td>{{ artigo.data_criacao|date:"d/m/Y H:i" }}</td>
                         
                         <td align="center">
-                            <!-- O botão Toggle (Liga/Desliga) usando o seu campo BooleanField -->
                             {% if not artigo.publicado %}
                                 <a href="{% url 'publicar_artigo' artigo.id %}" style="color: green;"><strong>Publicar</strong></a> | 
                             {% else %}
                                 <a href="{% url 'publicar_artigo' artigo.id %}" style="color: orange;">Reverter</a> | 
                             {% endif %}
 
-                            <a href="#">Editar</a> | 
-                            <a href="#" style="color: red;">Excluir</a>
+                            <!-- Links de Edição e Exclusão atualizados -->
+                            <a href="{% url 'editar_artigo' artigo.id %}">Editar</a> | 
+                            <a href="{% url 'excluir_artigo' artigo.id %}" style="color: red;" onclick="return confirm('Tem certeza que deseja excluir esta teoria? Essa ação não pode ser desfeita.')">Excluir</a>
                         </td>
                     </tr>
                 {% empty %}
                     <tr>
-                        <!-- Atualizado para colspan="6" devido à nova coluna de Status -->
                         <td colspan="6" align="center">Nenhuma teoria foi registrada na base de dados ainda.</td>
                     </tr>
                 {% endfor %}
